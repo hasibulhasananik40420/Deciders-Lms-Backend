@@ -101,6 +101,24 @@ async function run() {
             const cursor = await users.find(quary).toArray()
             res.send(cursor)
         })
+
+        // Save Profile Data  
+        app.put('/profiledata/:email', verifyJWT, async (req, res) => {
+            const email = req.params.email
+            const filter = { email: email }
+            const profileData = req.body
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: profileData
+            }
+
+            const result = await users.updateOne(filter, updateDoc, options);
+            const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN, { expiresIn: '1h' })
+            res.send({ result, token })
+        })
+
+
+
         // ------------------------------ 
         // Lessons Api
         // --------------------------------------------------------
