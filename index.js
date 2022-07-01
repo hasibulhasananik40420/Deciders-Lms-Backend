@@ -161,6 +161,13 @@ async function run() {
             res.send(cursor)
 
         })
+        // Post a  Offers
+        app.post('/addoffers', async (req, res) => {
+            const offerData = req.body
+            const result = await offers.insertOne(offerData)
+            res.send(result)
+
+        })
         app.get('/announcments', async (req, res) => {
             const quary = {}
             const result = await accouncment.find(quary).toArray()
@@ -168,7 +175,13 @@ async function run() {
             res.send(cursor)
 
         })
+        // Post a  Announcment
+        app.post('/addannouncment', async (req, res) => {
+            const offerData = req.body
+            const result = await accouncment.insertOne(offerData)
+            res.send(result)
 
+        })
 
 
 
