@@ -85,19 +85,19 @@ async function run() {
 
         // get All Students
         app.get('/allstudents', async (req, res) => {
-            const quary = { userType: 'student' }
+            const quary = {}
             const cursor = await users.find(quary).toArray()
             res.send(cursor)
         })
         // get All Teachers
         app.get('/allteachers', async (req, res) => {
-            const quary = { userType: 'teacher' }
+            const quary = { role: 'teacher' }
             const cursor = await users.find(quary).toArray()
             res.send(cursor)
         })
         // get All Admins
         app.get('/alladmins', async (req, res) => {
-            const quary = { userType: 'admin' }
+            const quary = { role: 'admin' }
             const cursor = await users.find(quary).toArray()
             res.send(cursor)
         })
