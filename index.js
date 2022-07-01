@@ -1,5 +1,5 @@
 const express = require('express')
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const cors = require('cors');
 const port = process.env.PORT || 5000;
@@ -68,6 +68,34 @@ async function run() {
 
         })
 
+        //admin role set 
+        app.put('/makeadmin/:email', async (req, res) => {
+            const email = req.params
+            const filter = { email: email.email }
+            const updateDoc = {
+                $set: { role: 'admin' }
+            }
+
+
+            const result = await users.updateOne(filter, updateDoc);
+            res.send(result)
+        })
+
+
+        //teacher role set
+        app.put('/maketeacher/:email', async (req, res) => {
+            const email = req.params
+            const filter = { email: email.email }
+            const updateDoc = {
+                $set: { role: 'teacher' }
+            }
+            console.log(updateDoc);
+            const result = await users.updateOne(filter, updateDoc);
+            res.send(result)
+        })
+
+
+
 
         // get All Users
         app.get('/users', async (req, res) => {
@@ -75,6 +103,19 @@ async function run() {
             const cursor = await users.find(quary).toArray()
             res.send(cursor)
         })
+
+        //delete user by id
+        app.delete('/delete/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await users.deleteOne(query)
+            res.send(result)
+
+        })
+
+
+        //
+
         // get My Profile Data by email address
         app.get('/myprofile/:email', async (req, res) => {
             const email = req.params
