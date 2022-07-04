@@ -41,11 +41,13 @@ async function run() {
         const CourseCollection = client.db("CourseCollection");
         const LessonsCollection = client.db("LessonsCollection");
         const NotificationCollections = client.db("NotificationCollections");
+        const ReviewCollection = client.db("ReviewCollection");
         const users = UserCollection.collection("users");
         const Courses = CourseCollection.collection("Courses");
         const Lessons = LessonsCollection.collection("Lessons");
         const offers = NotificationCollections.collection("offers");
         const accouncment = NotificationCollections.collection("accouncment");
+        const review = NotificationCollections.collection("review");
 
         app.get('/', (req, res) => {
             res.send('Deciders LMS Server is Running')
@@ -157,6 +159,31 @@ async function run() {
             const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN, { expiresIn: '1h' })
             res.send({ result, token })
         })
+
+        //-------------------------------------------------
+        //  store all review
+
+        app.post('/addreviews', async (req, res) => {
+            const addReviews = req.body
+            const result = await review.insertOne(addReviews)
+            res.send(result)
+        })
+
+
+        //  get all review
+
+        app.get('allreview', async (req, res) => {
+            const allreview = await review.find().toArray()
+            res.send(allreview)
+
+        })
+
+
+
+
+
+
+
 
 
 
