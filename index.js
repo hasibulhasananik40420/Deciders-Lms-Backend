@@ -38,10 +38,12 @@ async function run() {
     try {
         await client.connect();
         const UserCollection = client.db("UserCollection");
+        const CourseCollection = client.db("CourseCollection");
         const LessonsCollection = client.db("LessonsCollection");
         const NotificationCollections = client.db("NotificationCollections");
         const ReviewCollection = client.db("ReviewCollection");
         const users = UserCollection.collection("users");
+        const Courses = CourseCollection.collection("Courses");
         const Lessons = LessonsCollection.collection("Lessons");
         const offers = NotificationCollections.collection("offers");
         const accouncment = NotificationCollections.collection("accouncment");
@@ -77,8 +79,6 @@ async function run() {
             const updateDoc = {
                 $set: { role: 'admin' }
             }
-
-
             const result = await users.updateOne(filter, updateDoc);
             res.send(result)
         })
@@ -216,7 +216,118 @@ async function run() {
             res.send(cursor)
 
         })
+        // delete a lesson by id
+        app.delete('/lesson/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await Lessons.deleteOne(query)
+            res.send(result)
 
+        })
+        // Post A Lesson
+
+        app.post('/addlesson', async (req, res) => {
+            const lessonData = req.body
+            const result = await Lessons.insertOne(lessonData)
+            res.send(result)
+
+        })
+
+        // Lesson duplicate api
+        app.post('/duplicatelesson', async (req, res) => {
+            const newlessonData = req.body
+            const result = await Lessons.insertOne(newlessonData)
+            res.send(result)
+
+        })
+        // Lesson edite api
+        app.put('/editelesson/:id', async (req, res) => {
+            const id = req.params
+            const filter = { _id: ObjectId(id) }
+            let data = req.body
+            const updateDoc = {
+                $set: data
+            }
+            const result = await Lessons.updateOne(filter, updateDoc);
+            res.send(result)
+        })
+        // ------------------------------ 
+        // Course  Api
+        // --------------------------------------------------------
+
+        // get All course
+        app.get('/allcourses', async (req, res) => {
+            const quary = {}
+            const cursor = await Courses.find(quary).toArray()
+            res.send(cursor)
+        })
+        app.get('/homecourses', async (req, res) => {
+            const quary = {}
+            const cursor = await Courses.find(quary).limit(6).toArray()
+            res.send(cursor)
+        })
+
+
+        // get All Courses by category Name
+        app.get('/courses/:coursecatagory', async (req, res) => {
+            const courseCatagory = req.params
+            const quary = { courseCatagory: courseCatagory.coursecatagory }
+            const cursor = await Courses.find(quary).toArray()
+            res.send(cursor)
+
+        })
+
+        // Get a course by Id
+        app.get('/course/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const cursor = await Courses.findOne(query)
+            res.send(cursor)
+
+        })
+        // Get a course by CourseName
+        app.get('/course/:coursename', async (req, res) => {
+            const coursename = req.params
+            const quary = { title: coursename.coursename }
+            const cursor = await Courses.find(quary).toArray()
+            res.send(cursor)
+
+        })
+        // delete a course by id
+        app.delete('/course/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await Courses.deleteOne(query)
+            res.send(result)
+
+        })
+        // Post A Course
+
+        app.post('/addcourse', async (req, res) => {
+            const courseData = req.body
+            const result = await Courses.insertOne(courseData)
+            res.send(result)
+
+        })
+
+        // Course duplicate api
+        app.post('/duplicatecourse', async (req, res) => {
+            const newcourseData = req.body
+            const result = await Courses.insertOne(newcourseData)
+            res.send(result)
+
+        })
+        // edit Course api
+        app.put('/editecourse/:id', async (req, res) => {
+            const id = req.params
+            const filter = { _id: ObjectId(id) }
+            let data = req.body
+            const updateDoc = {
+                $set: data
+            }
+            const result = await Courses.updateOne(filter, updateDoc);
+            res.send(result)
+        })
 
         // ------------------------------------
         // Announcment and offers API    
@@ -224,7 +335,7 @@ async function run() {
         // Get all Offers
         app.get('/offers', async (req, res) => {
             const quary = {}
-            const result = await offers.find(quary).toArray()
+            const result = await offers.find(quary).limit(3).toArray()
             const cursor = result.reverse()
             res.send(cursor)
 
@@ -238,7 +349,7 @@ async function run() {
         })
         app.get('/announcments', async (req, res) => {
             const quary = {}
-            const result = await accouncment.find(quary).toArray()
+            const result = await accouncment.find(quary).limit(3).toArray()
             const cursor = result.reverse()
             res.send(cursor)
 
