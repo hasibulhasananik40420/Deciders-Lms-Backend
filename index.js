@@ -42,12 +42,14 @@ async function run() {
         const LessonsCollection = client.db("LessonsCollection");
         const NotificationCollections = client.db("NotificationCollections");
         const ReviewCollection = client.db("ReviewCollection");
+        const AddToCartCollection = client.db("AddToCartCollection");
         const users = UserCollection.collection("users");
         const Courses = CourseCollection.collection("Courses");
         const Lessons = LessonsCollection.collection("Lessons");
         const offers = NotificationCollections.collection("offers");
         const accouncment = NotificationCollections.collection("accouncment");
-        const review = NotificationCollections.collection("review");
+        const review = ReviewCollection.collection("review");
+        const addtocart = AddToCartCollection.collection("addtocart");
 
         app.get('/', (req, res) => {
             res.send('Deciders LMS Server is Running')
@@ -172,14 +174,31 @@ async function run() {
 
         //  get all review
 
-        app.get('allreview', async (req, res) => {
+        app.get('/allreview', async (req, res) => {
             const allreview = await review.find().toArray()
             res.send(allreview)
 
         })
 
 
+        //Add to card -----------------------
+        //------------------------------------
+        app.post('/addtocart', async (req, res) => {
+            const Cart = req.body
+            const result = await addtocart.insertOne(Cart)
+            res.send(result)
 
+        })
+
+
+
+        //get cart by email
+        app.get('/myallcart/:email', async (req, res) => {
+            const email = req.params
+            const quary = { email: email.email }
+            const cursor = await addtocart.find(quary).toArray()
+            res.send(cursor)
+        })
 
 
 
