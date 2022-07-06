@@ -183,27 +183,36 @@ async function run() {
 
         //Add to card -----------------------
         //------------------------------------
-        app.post('/addtocart', async (req, res) => {
+        app.put('/addtocart/:id', async (req, res) => {
+            const id = req.params.id
+            const filter = { _id: ObjectId(id) }
             const Cart = req.body
-            const result = await addtocart.insertOne(Cart)
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: Cart
+            }
+            const result = await addtocart.updateOne(filter, updateDoc, options);
             res.send(result)
 
         })
 
 
 
-        //get cart by email
+        //get carts by email
         app.get('/myallcart/:email', async (req, res) => {
             const email = req.params
             const quary = { email: email.email }
             const cursor = await addtocart.find(quary).toArray()
             res.send(cursor)
         })
+        // delete a cart
+        app.delete('/deletecart/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await addtocart.deleteOne(query)
+            res.send(result)
 
-
-
-
-
+        })
 
 
         // ------------------------------ 
