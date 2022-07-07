@@ -190,7 +190,11 @@ async function run() {
 
         })
 
+        app.get('/allcart', async (req, res) => {
+            const allcarts = await addtocart.find().toArray()
+            res.send(allcarts)
 
+        })
 
         //get cart by email
         app.get('/myallcart/:email', async (req, res) => {
