@@ -285,9 +285,28 @@ async function run() {
 
         // get All course
         app.get('/allcourses', async (req, res) => {
-            const quary = {}
-            const cursor = await Courses.find(quary).toArray()
-            res.send(cursor)
+            const query = {}
+            const page = parseInt(req.query.page)
+            const size = parseInt(req.query.size)
+            console.log(page);
+            const cursor = Courses.find(query)
+            let products;
+            if (page || size) {
+                products = await cursor.skip(page * size).limit(size).toArray()
+            }
+            else {
+
+                products = await cursor.toArray()
+            }
+            res.send(products)
+        })
+        // Total Course Count
+        app.get('/coursecount', async (req, res) => {
+            const query = {}
+            const cursor = Courses.find(query)
+            const count = await cursor.count()
+            res.send({ count })
+
         })
         app.get('/homecourses', async (req, res) => {
             const quary = {}
